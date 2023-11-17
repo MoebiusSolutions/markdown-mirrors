@@ -1,0 +1,58 @@
+
+# The list parallel repositories hosting the markdown files
+# ----
+# Each entry has the following fields:
+# 
+# * title: A jinja2 template for the name of the direct link to the file in the mirror
+# * url: A jinja2 template for the full url of file in the mirror
+#
+# Each jinja2 template accepts the following variables:
+#
+# * markdown_filename: Raw filename of the markdown file
+# * markdown_filename_escaped: Raw filename of the markdown file, escaped for display in markdown
+# ----
+mirrors:
+- title: "Repo 1 - {{ markdown_filename_escaped }}"
+  url: "https://git.example.com/repo1/develop/{{ markdown_filename }}"
+- title: "Repo 2 - {{ markdown_filename_escaped }}"
+  url: "https://git.example.com/repo2/develop/{{ markdown_filename }}"
+
+# The markdown content of "mirror" pages that should be generated
+# ----
+# The contents of this variable should be a jinja2 template of markdown content.
+#
+# The following variables are available for jinja2:
+#
+# * mirrors: A list of objects cotaining "title" and "url" of the mirror-specific link.
+#            The title should already be escaped for markdown consumption.
+# * markdown_title: Title of the reference markdown file, escaped for display in markdown
+# * markdown_filename: Raw filename of the reference markdown file
+# * markdown_filename_escaped: Raw filename of the reference markdown file, escaped for display in markdown
+# ----
+mirror_page_template: |
+  Mirrors for {{ markdown_filename_escaped }}
+  ================
+
+  Page: [{{ markdown_title }}]({{ markdown_filename }})
+
+  Mirrors:
+
+  {% for mirror in mirrors -%}
+  * [{{ mirror.title }}]({{ mirror.url }})
+  {% endfor %}
+
+# The filename of the generated markdown page containing mirror links
+# ----
+# The contents of this variable should be a jinja2 template of a filename.
+#
+# The following variables are available for jinja2:
+#
+# * markdown_filename: Raw filename of the reference markdown file
+# ----
+mirror_filename_template: "mirror.{{ markdown_filename }}"
+
+# The python regex pattern used to identify the "mirror" markdown files (e.g. matches "mirror_filename_template").
+# ----
+# This values prevents the utility from generating "mirror" files for mirror files.
+# ----
+mirror_filename_matcher: "^mirrors\\."
